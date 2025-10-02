@@ -83,20 +83,26 @@
         div.innerHTML = `<h3>${station.name}</h3>`;
       
         railLines.forEach(lineCode => {
-          const lineTrains = data.Trains.filter(t =>
-            (t.Line === lineCode) && (t.Min === null || t.Min <= 15)
-          );
+          const lineTrains = data.Trains.filter(t => {
+            if (t.Line !== lineCode) return false;
+            if (!t.Min) return false; // skip if missing
+            const min = t.Min === "ARR" ? 0 : parseInt(t.Min, 10);
+            return min <= 15;
+          });
+      
           if (lineTrains.length === 0) {
             div.innerHTML += `<p>${lineCode} line: no trains within 15 minutes</p>`;
           } else {
-            div.innerHTML += "<ul>" + lineTrains.map(t =>
-              `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
-            ).join("") + "</ul>";
+            div.innerHTML += "<ul>" + lineTrains.map(t => {
+              const min = t.Min === "ARR" ? "Arriving" : t.Min + " min";
+              return `<li>${t.Line} line to ${t.DestinationName}: ${min}</li>`;
+            }).join("") + "</ul>";
           }
         });
       
         railContainer.appendChild(div);
       }
+
 
     }
 
