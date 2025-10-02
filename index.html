@@ -86,7 +86,7 @@
   <div id="busContainer"></div>
   <div id="railContainer"></div>
   <label>
-  <input type="checkbox" id="styleToggle" checked>
+  <input type="checkbox" id="styleToggle">
   Red pill, or blue pill, Neo?
   </label>
 
@@ -208,18 +208,19 @@
 
   <script>
   // Set initial style
-  document.body.classList.add('matrix');
+document.body.classList.add('plain'); // <-- default is plain
 
-  // Toggle on checkbox change
-  document.getElementById('styleToggle').addEventListener('change', function() {
-    if (this.checked) {
-      document.body.classList.remove('plain');
-      document.body.classList.add('matrix');
-    } else {
-      document.body.classList.remove('matrix');
-      document.body.classList.add('plain');
-    }
-  });
+// Toggle on checkbox change
+document.getElementById('styleToggle').addEventListener('change', function() {
+  if (this.checked) {
+    document.body.classList.remove('plain');
+    document.body.classList.add('matrix');
+  } else {
+    document.body.classList.remove('matrix');
+    document.body.classList.add('plain');
+  }
+});
+
 </script>
 
 </body>
