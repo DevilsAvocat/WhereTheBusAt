@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>My WMATA Tracker</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .stop { margin-bottom: 20px; }
+    .stop h2 { margin-bottom: 5px; }
+  </style>
+</head>
+<body>
+  <h1>My WMATA Tracker</h1>
+
+  <div id="busContainer"></div>
+  <div id="railContainer"></div>
+
+  <script>
+    const apiKey = "1b71cc7c2d6049e9b06fbbd7b81c24e4";
+
+    // Example: Bus Stop IDs you care about
+    const busStops = [
+      { id: "1001195", name: "14th St & I St NW" },
+      { id: "1001442", name: "Columbia Rd & 18th St NW" }
+    ];
+
+    // Example: Rail Station Codes
+    const railStations = [
+      { code: "A01", name: "Metro Center" },
+      { code: "B03", name: "Dupont Circle" }
+    ];
+
+    async function fetchBus(stop) {
+      const url = `https://api.wmata.com/NextBusService.svc/json/jPredictions?StopID=${stop.id}`;
+      const resp = await fetch(url, { headers: { "api_key": apiKey } });
+      return resp.json();
+    }
+
+    async function fetchRail(station) {
+      const url = `https://api.wmata.com/StationPrediction.svc/json/GetPrediction/${station.code}`;
+      const resp = await fetch(url, { headers: { "api_key": apiKey } });
+      return resp.json();
+    }
+
+    async function loadData() {
+      const busContainer = document.getElementById("busContainer");
+      const railContainer = document.getElementById("railContainer");
+
+      busContainer.innerHTML = "<h2>Bus Predictions</h2>";
+      railContainer.innerHTML = "<h2>Rail Predictions</h2>";
+
+      // Buses
+      for (let stop of busStops) {
+        const data = await fetchBus(stop);
+        const div = document.createElement("div");
+        div.className = "stop";
+        div.innerHTML = `<h3>${stop.name}</h3>`;
+        if (data.Predictions.length === 0) {
+          div.innerHTML += "<p>No upcoming buses</p>";
+        } else {
+          div.innerHTML += "<ul>" + data.Predictions.map(p =>
+            `<li>${p.RouteID} to ${p.DirectionText}: ${p.Minutes} min</li>`
+          ).join("") + "</ul>";
+        }
+        busContainer.appendChild(div);
+      }
+
+      // Rail
+      for (let station of railStations) {
+        const data = await fetchRail(station);
+        const div = document.createElement("div");
+        div.className = "stop";
+        div.innerHTML = `<h3>${station.name}</h3>`;
+        if (data.Trains.length === 0) {
+          div.innerHTML += "<p>No upcoming trains</p>";
+        } else {
+          div.innerHTML += "<ul>" + data.Trains.map(t =>
+            `<li>${t.Line} line to ${t.DestinationName}: ${t.Minutes} min</li>`
+          ).join("") + "</ul>";
+        }
+        railContainer.appendChild(div);
+      }
+    }
+
+    loadData();
+  </script>
+</body>
+</html>
