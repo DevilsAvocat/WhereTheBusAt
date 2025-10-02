@@ -33,8 +33,6 @@
       { code: "E06", name: "Fort Totten" }
     ];
 
-    const railLines = ["RD", "OR", "BL", "GR", "SV"]; // Red, Orange, Blue, Green, Silver
-
     async function fetchBus(stop) {
       const url = `https://api.wmata.com/NextBusService.svc/json/jPredictions?StopID=${stop.id}`;
       const resp = await fetch(url, { headers: { "api_key": apiKey } });
@@ -54,13 +52,13 @@
       busContainer.innerHTML = "<h2>Bus Predictions</h2>";
       railContainer.innerHTML = "<h2>Rail Predictions</h2>";
 
-      // --- Buses ---
+      // Buses
       for (let stop of busStops) {
         const data = await fetchBus(stop);
         const div = document.createElement("div");
         div.className = "stop";
         div.innerHTML = `<h3>${stop.name}</h3>`;
-        if (!data.Predictions || data.Predictions.length === 0) {
+        if (data.Predictions.length === 0) {
           div.innerHTML += "<p>No upcoming buses</p>";
         } else {
           div.innerHTML += "<ul>" + data.Predictions.map(p =>
@@ -70,24 +68,21 @@
         busContainer.appendChild(div);
       }
 
-      // --- Rail ---
+      // Rail
       for (let station of railStations) {
         const data = await fetchRail(station);
         const div = document.createElement("div");
         div.className = "stop";
+
         div.innerHTML = `<h3>${station.name}</h3>`;
-
-        railLines.forEach(lineCode => {
-          const lineTrains = data.Trains.filter(t => t.Line === lineCode);
-          if (lineTrains.length === 0) {
-            div.innerHTML += `<p>${lineCode} line: no upcoming trains</p>`;
-          } else {
-            div.innerHTML += "<ul>" + lineTrains.map(t =>
-              `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
-            ).join("") + "</ul>";
-          }
-        });
-
+        if (data.Trains.length === 0) {
+          div.innerHTML += "<p>No upcoming trains</p>";
+        } else {
+      
+          div.innerHTML += "<ul>" + data.Trains.map(t =>
+          `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
+          ).join("") + "</ul>";
+        }
         railContainer.appendChild(div);
       }
     }
@@ -96,7 +91,3 @@
   </script>
 </body>
 </html>
-
-
-
-
