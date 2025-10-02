@@ -3,19 +3,36 @@
 <head>
   <title>My WMATA Tracker</title>
   <style>
-  body {
+  body.plain {
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+    margin: 20px;
+  }
+
+  body.plain h1, body.plain h2, body.plain h3 {
+    color: black;
+    text-shadow: none;
+  }
+
+  body.plain .stop {
+    border-left: 3px solid black;
+    padding-left: 10px;
+  }
+
+  body.matrix {
     font-family: "Courier New", monospace;
     background-color: black;
     color: #00FF00;
     margin: 20px;
   }
 
-  h1, h2, h3 {
+  body.matrix h1, body.matrix h2, body.matrix h3 {
     color: #00FF00;
     text-shadow: 0 0 5px #00FF00;
   }
 
-  .stop {
+  body.matrix .stop {
     margin-bottom: 20px;
     border-left: 3px solid #00FF00;
     padding-left: 10px;
@@ -31,28 +48,28 @@
   }
 
   input, button {
-    background-color: black;
-    color: #00FF00;
-    border: 1px solid #00FF00;
     padding: 5px 10px;
     font-family: monospace;
     margin-right: 5px;
   }
 
-  input::placeholder {
+  body.matrix input, body.matrix button {
+    background-color: black;
+    color: #00FF00;
+    border: 1px solid #00FF00;
+  }
+
+  body.matrix input::placeholder {
     color: #00FF00;
     opacity: 0.5;
   }
 
-  button:hover {
+  body.matrix button:hover {
     background-color: #003300;
     cursor: pointer;
   }
-
-  #dynamicStopResults {
-    margin-top: 10px;
-  }
 </style>
+
 
 </head>
 <body>
@@ -68,6 +85,10 @@
 
   <div id="busContainer"></div>
   <div id="railContainer"></div>
+  <label>
+  <input type="checkbox" id="styleToggle" checked>
+  Matrix Style
+  </label>
 
   <script>
     const apiKey = "1b71cc7c2d6049e9b06fbbd7b81c24e4";
@@ -184,5 +205,22 @@
 
     loadData();
   </script>
+
+  <script>
+  // Set initial style
+  document.body.classList.add('matrix');
+
+  // Toggle on checkbox change
+  document.getElementById('styleToggle').addEventListener('change', function() {
+    if (this.checked) {
+      document.body.classList.remove('plain');
+      document.body.classList.add('matrix');
+    } else {
+      document.body.classList.remove('matrix');
+      document.body.classList.add('plain');
+    }
+  });
+</script>
+
 </body>
 </html>
