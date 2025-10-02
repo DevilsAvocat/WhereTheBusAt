@@ -93,7 +93,6 @@
           });
       
           if (lineTrains.length === 0) {
-            div.innerHTML += `<p>${lineCode} line: no trains within 15 minutes</p>`;
           } else {
             div.innerHTML += "<ul>" + lineTrains.map(t => {
               const min = t.Min === "ARR" ? "Arriving" : t.Min + " min";
