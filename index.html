@@ -73,12 +73,17 @@
         const data = await fetchRail(station);
         const div = document.createElement("div");
         div.className = "stop";
+
+        
+
         div.innerHTML = `<h3>${station.name}</h3>`;
         if (data.Trains.length === 0) {
           div.innerHTML += "<p>No upcoming trains</p>";
         } else {
+      
+
           div.innerHTML += "<ul>" + data.Trains.map(t =>
-            `<li>${t.Line} line to ${t.DestinationName}: ${t.Minutes} min</li>`
+          `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
           ).join("") + "</ul>";
         }
         railContainer.appendChild(div);
