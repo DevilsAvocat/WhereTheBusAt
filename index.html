@@ -3,10 +3,57 @@
 <head>
   <title>My WMATA Tracker</title>
   <style>
-    body { font-family: Arial, sans-serif; margin: 20px; }
-    .stop { margin-bottom: 20px; }
-    .stop h2 { margin-bottom: 5px; }
-  </style>
+  body {
+    font-family: "Courier New", monospace;
+    background-color: black;
+    color: #00FF00;
+    margin: 20px;
+  }
+
+  h1, h2, h3 {
+    color: #00FF00;
+    text-shadow: 0 0 5px #00FF00;
+  }
+
+  .stop {
+    margin-bottom: 20px;
+    border-left: 3px solid #00FF00;
+    padding-left: 10px;
+  }
+
+  ul {
+    list-style-type: none;
+    padding-left: 0;
+  }
+
+  li {
+    padding: 2px 0;
+  }
+
+  input, button {
+    background-color: black;
+    color: #00FF00;
+    border: 1px solid #00FF00;
+    padding: 5px 10px;
+    font-family: monospace;
+    margin-right: 5px;
+  }
+
+  input::placeholder {
+    color: #00FF00;
+    opacity: 0.5;
+  }
+
+  button:hover {
+    background-color: #003300;
+    cursor: pointer;
+  }
+
+  #dynamicStopResults {
+    margin-top: 10px;
+  }
+</style>
+
 </head>
 <body>
   <h1>My WMATA Tracker</h1>
