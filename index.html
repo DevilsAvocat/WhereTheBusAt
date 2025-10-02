@@ -54,39 +54,50 @@
       busContainer.innerHTML = "<h2>Bus Predictions</h2>";
       railContainer.innerHTML = "<h2>Rail Predictions</h2>";
 
-      // Buses
-      for (let stop of busStops) {
-        const data = await fetchBus(stop);
-        const div = document.createElement("div");
-        div.className = "stop";
-        div.innerHTML = `<h3>${stop.name}</h3>`;
-        if (data.Predictions.length === 0) {
-          div.innerHTML += "<p>No upcoming buses</p>";
-        } else {
-          div.innerHTML += "<ul>" + data.Predictions.map(p =>
-            `<li>${p.RouteID} to ${p.DirectionText}: ${p.Minutes} min</li>`
-          ).join("") + "</ul>";
-        }
-        busContainer.appendChild(div);
-      }
+      // --- Buses ---
+for (let stop of busStops) {
+  const data = await fetchBus(stop);
+  const div = document.createElement("div");
+  div.className = "stop";
+  div.innerHTML = `<h3>${stop.name}</h3>`;
+  if (!data.Predictions || data.Predictions.length === 0) {
+    div.innerHTML += "<p>No upcoming buses</p>";
+  } else {
+    const upcoming = data.Predictions.filter(p => p.Minutes <= 15);
+    if (upcoming.length === 0) {
+      div.innerHTML += "<p>No buses arriving within 15 minutes</p>";
+    } else {
+      div.innerHTML += "<ul>" + upcoming.map(p =>
+        `<li>${p.RouteID} to ${p.DirectionText}: ${p.Minutes} min</li>`
+      ).join("") + "</ul>";
+    }
+  }
+  busContainer.appendChild(div);
+}
 
-      // Rail
-      for (let station of railStations) {
-        const data = await fetchRail(station);
-        const div = document.createElement("div");
-        div.className = "stop";
+// --- Rail ---
+for (let station of railStations) {
+  const data = await fetchRail(station);
+  const div = document.createElement("div");
+  div.className = "stop";
+  div.innerHTML = `<h3>${station.name}</h3>`;
 
-        div.innerHTML = `<h3>${station.name}</h3>`;
-        if (data.Trains.length === 0) {
-          div.innerHTML += "<p>No upcoming trains</p>";
-        } else {
-      
-          div.innerHTML += "<ul>" + data.Trains.map(t =>
-          `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
-          ).join("") + "</ul>";
-        }
-        railContainer.appendChild(div);
-      }
+  railLines.forEach(lineCode => {
+    const lineTrains = data.Trains.filter(t =>
+      (t.Line === lineCode) && (t.Min === null || t.Min <= 15)
+    );
+    if (lineTrains.length === 0) {
+      div.innerHTML += `<p>${lineCode} line: no trains within 15 minutes</p>`;
+    } else {
+      div.innerHTML += "<ul>" + lineTrains.map(t =>
+        `<li>${t.Line} line to ${t.DestinationName}: ${t.Min ? t.Min + " min" : "Arriving"}</li>`
+      ).join("") + "</ul>";
+    }
+  });
+
+  railContainer.appendChild(div);
+}
+
     }
 
     loadData();
