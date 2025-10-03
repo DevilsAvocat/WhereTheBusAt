@@ -113,7 +113,7 @@
       return resp.json();
     }
 async function fetchRailIncidents() {
-  const url = `https://api.wmata.com/Incidents.svc/json/RailIncidents`;
+  const url = `https://api.wmata.com/Incidents.svc/json/Incidents`;
   const resp = await fetch(url, { headers: { "api_key": apiKey } });
   return resp.json();
 }
