@@ -112,7 +112,33 @@
       const resp = await fetch(url, { headers: { "api_key": apiKey } });
       return resp.json();
     }
-
+async function fetchRailIncidents() {
+  const url = `https://api.wmata.com/Incidents.svc/json/GetRailIncidents`;
+  const resp = await fetch(url, { headers: { "api_key": apiKey } });
+  return resp.json();
+}
+    function displayRailIncidents(incidentData) {
+  const railContainer = document.getElementById("railContainer");
+  const inc = incidentData.Incidents;
+  if (!inc || inc.length === 0) {
+    const div = document.createElement("div");
+    div.innerHTML = "<p>No known rail delays</p>";
+    railContainer.insertBefore(div, railContainer.firstChild);
+    return;
+  }
+  // show each delay
+  inc.forEach(i => {
+    const div = document.createElement("div");
+    div.style.border = "1px solid red";
+    div.style.padding = "5px";
+    div.style.marginBottom = "10px";
+    div.innerHTML = `
+      <strong>${i.IncidentType}</strong> on <em>${i.LinesAffected}</em><br/>
+      ${i.Description}
+    `;
+    railContainer.insertBefore(div, railContainer.firstChild);
+  });
+}
     async function fetchRail(station) {
       const url = `https://api.wmata.com/StationPrediction.svc/json/GetPrediction/${station.code}`;
       const resp = await fetch(url, { headers: { "api_key": apiKey } });
@@ -125,6 +151,13 @@
 
       busContainer.innerHTML = "<h2>Bus Predictions</h2>";
       railContainer.innerHTML = "<h2>Rail Predictions</h2>";
+// Now fetch incidents:
+  try {
+    const incidentData = await fetchRailIncidents();
+    displayRailIncidents(incidentData);
+  } catch (e) {
+    console.error("Error fetching incidents:", e);
+  }
 
       // --- Buses ---
       for (let stop of busStops) {
@@ -204,6 +237,9 @@
     });
 
     loadData();
+    // inside or after loadData
+const incidentData = await fetchRailIncidents();
+displayRailIncidents(incidentData);
   </script>
 
   <script>
